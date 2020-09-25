@@ -1,0 +1,123 @@
+@hostname = localhost
+@port = 3030
+@baseUrl = http://{{hostname}}:{{port}}
+@contentType = application/json
+
+############################################
+###                USER
+############################################
+### list ->find()
+GET {{baseUrl}}/user
+### create
+POST {{baseUrl}}/user HTTP/1.1
+content-type: {{contentType}}
+
+{
+    "name": "Max Power",
+    "image_filename": "user1.png"
+}
+### image upload
+POST {{baseUrl}}/user HTTP/1.1
+Content-Type: multipart/form-data; boundary=!blob!
+
+!blob!
+Content-Disposition: form-data; name="text"
+
+User2
+!blob!
+Content-Disposition: form-data; name="image"; filename="user2.png"
+Content-Type: image/png
+
+< ./images/user/user2.png
+!blob!--
+### get
+GET {{baseUrl}}/user/2
+### update
+PATCH {{baseUrl}}/user/2
+content-type: {{contentType}}
+
+{
+    "name": "Power Max"
+}
+### delete
+DELETE {{baseUrl}}/user/2
+
+############################################
+###                Formular
+############################################
+### list
+GET {{baseUrl}}/formular
+### get single
+GET {{baseUrl}}/formular/1
+
+### create
+POST {{baseUrl}}/formular HTTP/1.1
+content-type: {{contentType}}
+
+{
+    
+    "name": "Formular name",
+    "formgroups": [
+        {
+            "name": "General",
+            "fields": [
+                { "name": "Firstname"},
+                { "name": "Lastname"},
+                { "name": "Birthdate"}
+            ]
+        },
+        {
+            "name": "Address",
+            "fields": [
+                { "name": "Street"},
+                { "name": "Zip"},
+                { "name": "Country"}
+            ]
+        },
+        {
+            "name": "Additions",
+            "fields": [
+                { "name": "First Line"},
+                { "name": "Second Line"},
+                { "name": "Third Line"}
+            ]
+        }
+    ]
+}
+
+############################################
+###                Document
+############################################
+GET {{baseUrl}}/document
+### create complete document for a specific formular and the fieldvalues for the fields of the formular
+POST {{baseUrl}}/document HTTP/1.1
+content-type: {{contentType}}
+
+{
+    "name": "Document name",
+    "uid": "2", //user ID
+    "fid": "1", //formular Id
+    "fieldvalues": [
+        { "documentId": 1, "fieldId": 1, "text": "Sir Max" },
+        { "documentId": 1, "fieldId": 2, "text": "Power" },
+        { "documentId": 1, "fieldId": 3, "text": "I'm not fill this out" }
+    ]
+}
+
+
+############################################
+###                misc
+############################################
+POST https://api.example.com/user/upload
+Content-Type: multipart/form-data; boundary=----WebKitFormBoundary7MA4YWxkTrZu0gW
+
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="text"
+
+title
+------WebKitFormBoundary7MA4YWxkTrZu0gW
+Content-Disposition: form-data; name="image"; filename="1.png"
+Content-Type: image/png
+
+< ./1.png
+------WebKitFormBoundary7MA4YWxkTrZu0gW--
